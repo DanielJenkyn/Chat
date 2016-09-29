@@ -1,21 +1,27 @@
 package com.owlr.chat;
 
-import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * Server class for chat program.
  */
-public class Server {
-	public static void main(String[] args) {
-		int portNum = 4444;
-		ServerSocket serverSocket = null;
+class Server {
+	public static void main(String args[]) {
+		String data = "Toobie ornaught toobie";
 		try {
-			serverSocket = new ServerSocket(portNum);
-		} catch (IOException e) {
-			System.err.println("Could not listen on port: " + portNum);
-			System.exit(1);
-
+			ServerSocket srvr = new ServerSocket(1234);
+			Socket skt = srvr.accept();
+			System.out.print("Server has connected!\n");
+			PrintWriter out = new PrintWriter(skt.getOutputStream(), true);
+			System.out.print("Sending string: '" + data + "'\n");
+			out.print(data);
+			out.close();
+			skt.close();
+			srvr.close();
+		} catch (Exception e) {
+			System.out.print("Whoops! It didn't work!\n");
 		}
 	}
 }
