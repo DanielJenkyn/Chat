@@ -1,27 +1,40 @@
 package com.owlr.chat;
 
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
  * Server class for chat program.
  */
-class Server {
+public class Server {
 	public static void main(String args[]) {
-		String data = "Toobie ornaught toobie";
+
+		ServerSocket echoServer = null;
+		String line;
+
+		BufferedReader is;
+		PrintStream os;
+		Socket clientSocket = null;
+
 		try {
-			ServerSocket srvr = new ServerSocket(1234);
-			Socket skt = srvr.accept();
-			System.out.print("Server has connected!\n");
-			PrintWriter out = new PrintWriter(skt.getOutputStream(), true);
-			System.out.print("Sending string: '" + data + "'\n");
-			out.print(data);
-			out.close();
-			skt.close();
-			srvr.close();
-		} catch (Exception e) {
-			System.out.print("Whoops! It didn't work!\n");
+			echoServer = new ServerSocket(2222);
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+
+		System.out.println("The server started. To stop it press <CTRL><C>.");
+		try {
+			clientSocket = echoServer.accept();
+			is = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			os = new PrintStream(clientSocket.getOutputStream());
+
+			while (true) {
+				line = is.readLine();
+				os.println("From server: " + line);
+			}
+		} catch (IOException e) {
+			System.out.println(e);
 		}
 	}
 }

@@ -1,29 +1,65 @@
 package com.owlr.chat;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * Created by DanielJenkyn on 29/09/2016.
  */
-class Client {
-	public static void main(String args[]) {
+public class Client {
+	public static void main(String[] args) {
+
+		Socket clientSocket = null;
+		DataInputStream is = null;
+		PrintStream os = null;
+		DataInputStream inputLine = null;
+
 		try {
-			Socket skt = new Socket("localhost", 1234);
-			BufferedReader in = new BufferedReader(new
-					InputStreamReader(skt.getInputStream()));
-			System.out.print("Received string: '");
+			clientSocket = new Socket("localhost", 2222);
+			os = new PrintStream(clientSocket.getOutputStream());
+			is = new DataInputStream(clientSocket.getInputStream());
+			// Todo - Fix deprecated readline
+			inputLine = new DataInputStream(new BufferedInputStream(System.in));
+		} catch (UnknownHostException e) {
+			System.err.println("Don't know about that host");
+		} catch (IOException e) {
+			System.err.println("Couldn't get I/O for the connection to host");
+		}
 
-			while (!in.ready()) {
+    /*
+	 * If everything has been initialized then we want to write some data to the
+     * socket we have opened a connection to on port 2222.
+     */
+		if (clientSocket != null && os != null && is != null) {
+			try {
 
+        /*
+		 * Keep on reading from/to the socket till we receive the "Ok" from the
+         * server, once we received that then we break.
+         */
+				System.out.println("The client started. Type any text. To quit it type 'Ok'.");
+				String responseLine;
+				os.println(inputLine.readLine());
+				while ((responseLine = is.readLine()) != null) {
+					System.out.println(responseLine);
+					if (responseLine.indexOf("Ok") != -1) {
+						break;
+					}
+					os.println(inputLine.readLine());
+				}
+
+        /*
+		 * Close the output stream, close the input stream, close the socket.
+         */
+				os.close();
+				is.close();
+				clientSocket.close();
+			} catch (UnknownHostException e) {
+				System.err.println("Trying to connect to unknown host: " + e);
+			} catch (IOException e) {
+				System.err.println("IOException:  " + e);
 			}
-			System.out.println(in.readLine()); // Read one line and output it
-
-			System.out.print("'\n");
-			in.close();
-		} catch (Exception e) {
-			System.out.print("Whoops! It didn't work!\n");
 		}
 	}
 }
