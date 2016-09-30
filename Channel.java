@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 /**
- * Created by DanielJenkyn on 30/09/2016.
+ * Channel class
  */
 public class Channel implements Runnable {
 
@@ -15,7 +15,7 @@ public class Channel implements Runnable {
 	private boolean isRunning;
 
 	public void bind(int port) throws SocketException {
-		socket = new DatagramSocket();
+		socket = new DatagramSocket(port);
 	}
 
 	public void start() {
@@ -39,6 +39,7 @@ public class Channel implements Runnable {
 			try {
 				socket.receive(packet);
 				String msg = new String(buffer, 0, packet.getLength());
+				System.out.println(msg);
 			} catch (IOException e) {
 				break;
 			}

@@ -26,7 +26,7 @@ public class Client {
 		Channel channel = new Channel();
 		channel.bind(sourcePort);
 		channel.start();
-		System.out.println("Started");
+		System.out.println("Binded");
 
 		InetSocketAddress address = new InetSocketAddress(destinationIP, destinationPort);
 
